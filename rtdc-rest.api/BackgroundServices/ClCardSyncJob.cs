@@ -56,7 +56,7 @@ namespace rtdc_rest.api.BackgroundServices
 
                             HttpClientHelper httpClientHelper = new();
 
-                            httpClientHelper.SendPOSTRequest("username", "pasword", "endpoint", "postdata");
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "endpoint", "/Retailers");
 
                         }
 

@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace rtdc_rest.api.Helpers
 {
@@ -10,8 +13,24 @@ namespace rtdc_rest.api.Helpers
         }
         public string SendPOSTRequest(string userName, string password, string endPoint, object postData)
         {
-            //string urlPathForRequest = _jPlatformServiceUrl + "https://rtdc-apitest.engingrup.com/api/AYK/";
-            //urlPathForRequest = urlPathForRequest + endpoint;
+            string urlPathForRequest = "https://rtdc-apitest.engingrup.com/api/AYK";
+            urlPathForRequest = urlPathForRequest + endPoint;
+
+            var authenticationString = $"{userName}:{password}";
+            var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString));
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, urlPathForRequest);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64String);
+
+            var httpClient = new HttpClient();
+            var response = httpClient.Send(requestMessage);
+
+            return response.Content.ReadAsStringAsync().Result;
+
+
+
+            ////////////////////////////////////////////////////////////////////
+           
 
             //var jsonModel = JsonSerializer.Serialize(postData);
             //var postDataByte = Encoding.ASCII.GetBytes(jsonModel);
@@ -42,9 +61,7 @@ namespace rtdc_rest.api.Helpers
             //    return responseString;
             //}
 
-            //return responseString;
-
-            return "";
+            return responseString;
         }
 
     }
