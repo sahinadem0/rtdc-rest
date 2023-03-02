@@ -5,10 +5,10 @@ using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices
 {
-    public class ClCardSyncJob : BackgroundService
+    public class StockFlSyncJob : BackgroundService
     {
         public IServiceProvider _service { get; }
-        public ClCardSyncJob(IServiceProvider service)
+        public StockFlSyncJob(IServiceProvider service)
         {
             _service = service;
         }
@@ -27,32 +27,38 @@ namespace rtdc_rest.api.BackgroundServices
                 {
                     using (var scope = _service.CreateScope())
                     {
-                        var clCardService = scope.ServiceProvider.GetRequiredService<IClCardService>();
+                        var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
 
-                        var clCards = await clCardService.GetClCardListAsync();
+                        var stockFls = await StockFlService.GetStockFlListAsync();
 
 
-                        foreach (var clcard in clCards)
+                        foreach (var stockFl in stockFls)
                         {
-                            CreateRetailerReqJson createRetailerReqJson = new();
+                            CreateStockFlowReqJson createStockFlowReqJson = new()
 
-                            createRetailerReqJson.dataSourceCode = clcard.DataSourceCode;
-                            createRetailerReqJson.retailerCode = clcard.RetailerCode;
-                            createRetailerReqJson.retailerRefId = clcard.RetailerRefId;
-                            createRetailerReqJson.channelCode = clcard.ChannelCode;
-                            createRetailerReqJson.title = clcard.Title;
-                            createRetailerReqJson.email = clcard.Email;
-                            createRetailerReqJson.Phone = clcard.Phone;
-                            createRetailerReqJson.taxOffice = clcard.TaxOffice;
-                            createRetailerReqJson.taxNumber = clcard.TaxNumber;
-                            createRetailerReqJson.contactName = clcard.ContactName;
-                            createRetailerReqJson.country = clcard.Country;
-                            createRetailerReqJson.city = clcard.City;
-                            createRetailerReqJson.district = clcard.District;
-                            createRetailerReqJson.address = clcard.Address;
-                            createRetailerReqJson.zipCode = clcard.ZipCode;
+                            CreateStockFlowReqJson.dataSourceCode = StockFl.DataSourceCode;
+                            CreateStockFlowReqJson.manufacturerCode = StockFl.manufacturerCode;
+                            CreateStockFlowReqJson.retailerCode = StockFl.retailerCode;
+                            CreateStockFlowReqJson.retailerRefId = StockFl.retailerRefId;
+                            CreateStockFlowReqJson.year = StockFl.year;
+                            CreateStockFlowReqJson.month = StockFl.month;
+                            CreateStockFlowReqJson.invoiceDate = StockFl.invoiceDate;
+                            CreateStockFlowReqJson.invoiceDateSystem = StockFl.invoiceDateSystem;
+                            CreateStockFlowReqJson.invoiceId = StockFl.invoiceId;
+                            CreateStockFlowReqJson.invoiceNo = StockFl.invoiceNo;
+                            CreateStockFlowReqJson.invoiceLine = StockFl.invoiceLine;
+                            CreateStockFlowReqJson.productCode = StockFl.productCode;
+                            CreateStockFlowReqJson.itemQuantity = StockFl.itemQuantity;
+                            CreateStockFlowReqJson.quantityInPackage = StockFl.quantityInPackage;
+                            CreateStockFlowReqJson.packageQuantity = StockFl.packageQuantity;
+                            CreateStockFlowReqJson.itemBarcode = StockFl.itemBarcode;
+                            CreateStockFlowReqJson.packageBarcode = StockFl.packageBarcode;
+                            CreateStockFlowReqJson.lineAmount = StockFl.lineAmount;
+                            CreateStockFlowReqJson.discountAmount = StockFl.discountAmount;
+                            CreateStockFlowReqJson.salesOrderId = StockFl.salesOrderId;
+                            CreateStockFlowReqJson.isReturnInvoice = StockFl.isReturnInvoice;
 
-                            string retailerJsonString = JsonSerializer.Serialize(createRetailerReqJson);
+                            string stockFlJsonString = JsonSerializer.Serialize(CreateStockFlowReqJson);
 
                             HttpClientHelper httpClientHelper = new();
 
