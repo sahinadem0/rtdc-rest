@@ -44,13 +44,13 @@ namespace rtdc_rest.api.BackgroundServices
                             createRetailerReqJson.email = clcard.Email;
                             createRetailerReqJson.Phone = clcard.Phone;
                             createRetailerReqJson.taxOffice = clcard.TaxOffice;
-                            createRetailerReqJson.taxNumber = clcard.TaxNumber;
+                            //createRetailerReqJson.taxNumber = clcard.TaxNumber;
                             createRetailerReqJson.contactName = clcard.ContactName;
                             createRetailerReqJson.country = clcard.Country;
                             createRetailerReqJson.city = clcard.City;
                             createRetailerReqJson.district = clcard.District;
                             createRetailerReqJson.address = clcard.Address;
-                            createRetailerReqJson.zipCode = clcard.ZipCode;
+                            //createRetailerReqJson.zipCode = clcard.ZipCode;
 
                             string retailerJsonString = JsonSerializer.Serialize(createRetailerReqJson);
 

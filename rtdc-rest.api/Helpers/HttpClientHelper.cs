@@ -11,7 +11,7 @@ namespace rtdc_rest.api.Helpers
         {
 
         }
-        public string SendPOSTRequest(string userName, string password, string endPoint, object postData)
+        public string SendPOSTRequest(string userName, string password, string endPoint, string postData)
         {
             string urlPathForRequest = "https://rtdc-apitest.engingrup.com/api/AYK";
             urlPathForRequest = urlPathForRequest + endPoint;
@@ -19,10 +19,15 @@ namespace rtdc_rest.api.Helpers
             var authenticationString = $"{userName}:{password}";
             var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString));
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, urlPathForRequest);
+            var content = new StringContent(postData, Encoding.UTF8, "application/json");
+
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, urlPathForRequest);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64String);
+            requestMessage.Content = content;
 
             var httpClient = new HttpClient();
+            
             var response = httpClient.Send(requestMessage);
 
             return response.Content.ReadAsStringAsync().Result;
@@ -61,7 +66,7 @@ namespace rtdc_rest.api.Helpers
             //    return responseString;
             //}
 
-            return responseString;
+            //return responseString;
         }
 
     }

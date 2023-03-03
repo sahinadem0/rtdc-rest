@@ -1,6 +1,7 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
+using System.Linq;
 using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices
@@ -21,45 +22,47 @@ namespace rtdc_rest.api.BackgroundServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                //var token = GetToken();
-                // await Task.Delay(1000 * 60, stoppingToken);
                 try
                 {
                     using (var scope = _service.CreateScope())
                     {
                         var clCardService = scope.ServiceProvider.GetRequiredService<IClCardService>();
-
                         var clCards = await clCardService.GetClCardListAsync();
+                        var grouppedClcArdList = clCards.GroupBy(g => g.DataSourceCode).ToList();
 
-
-                        foreach (var clcard in clCards)
+                        foreach (var grouppedClcard in grouppedClcArdList)
                         {
-                            CreateRetailerReqJson createRetailerReqJson = new();
+                            List<CreateRetailerReqJson> clcardList = new();
+                            foreach (var clcard in grouppedClcard)
+                            {
+                                CreateRetailerReqJson createRetailerReqJson = new();
 
-                            createRetailerReqJson.dataSourceCode = clcard.DataSourceCode;
-                            createRetailerReqJson.retailerCode = clcard.RetailerCode;
-                            createRetailerReqJson.retailerRefId = clcard.RetailerRefId;
-                            createRetailerReqJson.channelCode = clcard.ChannelCode;
-                            createRetailerReqJson.title = clcard.Title;
-                            createRetailerReqJson.email = clcard.Email;
-                            createRetailerReqJson.Phone = clcard.Phone;
-                            createRetailerReqJson.taxOffice = clcard.TaxOffice;
-                            createRetailerReqJson.taxNumber = clcard.TaxNumber;
-                            createRetailerReqJson.contactName = clcard.ContactName;
-                            createRetailerReqJson.country = clcard.Country;
-                            createRetailerReqJson.city = clcard.City;
-                            createRetailerReqJson.district = clcard.District;
-                            createRetailerReqJson.address = clcard.Address;
-                            createRetailerReqJson.zipCode = clcard.ZipCode;
+                                createRetailerReqJson.dataSourceCode = clcard.DataSourceCode;
+                                createRetailerReqJson.retailerCode = clcard.RetailerCode;
+                                createRetailerReqJson.retailerRefId = clcard.RetailerRefId;
+                                createRetailerReqJson.channelCode = clcard.ChannelCode;
+                                createRetailerReqJson.title = clcard.Title;
+                                createRetailerReqJson.email = clcard.Email;
+                                createRetailerReqJson.Phone = clcard.Phone;
+                                createRetailerReqJson.taxOffice = clcard.TaxOffice;
+                                createRetailerReqJson.taxNumber = string.IsNullOrEmpty(clcard.TaxNumber) ? 0 : long.Parse(clcard.TaxNumber);
+                                createRetailerReqJson.contactName = clcard.ContactName;
+                                createRetailerReqJson.country = clcard.Country;
+                                createRetailerReqJson.city = clcard.City;
+                                createRetailerReqJson.district = clcard.District;
+                                createRetailerReqJson.address = clcard.Address;
+                                createRetailerReqJson.zipCode = string.IsNullOrEmpty(clcard.ZipCode) ? 0 : int.Parse(clcard.ZipCode);
 
-                            string retailerJsonString = JsonSerializer.Serialize(createRetailerReqJson);
+                                clcardList.Add(createRetailerReqJson);
+                            }
+
+                            string retailerJsonString = JsonSerializer.Serialize(clcardList);
 
                             HttpClientHelper httpClientHelper = new();
 
-                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "endpoint", "/Retailers");
-
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/Retailers", retailerJsonString);
                         }
-
+                       
                         await Task.Delay(1000 * 60, stoppingToken);
                     }
                 }
