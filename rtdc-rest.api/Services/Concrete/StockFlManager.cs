@@ -9,7 +9,7 @@ namespace rtdc_rest.api.Services.Concrete
 {
     public class StockFlManager : IStockFlService
     {
-        public async Task<List<ClCardDto>> GetStockFlAsync()
+        public async Task<List<StockFlDto>> GetStockFlAsync()
         {
             using (var connection = new SqlConnection("Server =172.16.40.20; Database = AYK2008; User ID = PG; Password = PG2007"))
             //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
@@ -40,9 +40,14 @@ namespace rtdc_rest.api.Services.Concrete
                     "AND CLC.TAXNR IS NOT NULL AND CLC.TAXNR<>'' AND CLC.DISTRICT IS NOT NULL AND CLC.DISTRICT<>'' ";
 
                 //sql = " select * from LG_001_CLCARD ";
-                var result = connection.Query<ClCardDto>(sql).ToList();
+                var result = connection.Query<StockFlDto>(sql).ToList();
                 return result;
             }
+        }
+
+        public Task<List<StockFlDto>> GetStockFlListAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
