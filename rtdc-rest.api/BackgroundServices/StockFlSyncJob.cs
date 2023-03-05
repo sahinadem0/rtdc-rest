@@ -1,5 +1,7 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
+using rtdc_rest.api.Services.Abstract;
+using System.Linq;
 using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices
@@ -20,58 +22,58 @@ namespace rtdc_rest.api.BackgroundServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                //var token = GetToken();
-                // await Task.Delay(1000 * 60, stoppingToken);
-                //try
-                //{
-                //    using (var scope = _service.CreateScope())
-                //    {
-                //        var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
+                try
+                {
+                    using (var scope = _service.CreateScope())
+                    {
+                        var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
+                        var stockFls = await stockFlService.GetStockFlListAsync();
+                        var grouppedStockFlList = stockFls.GroupBy(g => g.dataSourceCode).ToList();
 
-                //        var stockFls = await StockFlService.GetStockFlListAsync();
+                        foreach (var grouppedStockFl in grouppedStockFlList)
+                        {
+                            List<CreateStockFlowReqJson> stockFlList = new();
+                            foreach (var stockfl in grouppedStockFl)
+                            {
+                                CreateStockFlowReqJson createStockFlowReqJson = new();
 
+                                createStockFlowReqJson.dataSourceCode = stockfl.dataSourceCode;
+                                createStockFlowReqJson.manufacturerCode = stockfl.manufacturerCode;
+                                createStockFlowReqJson.retailerCode = stockfl.retailerCode;
+                                createStockFlowReqJson.retailerRefId = stockfl.retailerRefId;
+                                createStockFlowReqJson.year = stockfl.year;
+                                createStockFlowReqJson.month = stockfl.month;
+                                createStockFlowReqJson.invoiceDate = stockfl.invoiceDate;
+                                createStockFlowReqJson.invoiceDateSystem = stockfl.invoiceDateSystem;
+                                createStockFlowReqJson.invoiceId = stockfl.invoiceId;
+                                createStockFlowReqJson.invoiceNo = stockfl.invoiceNo;
+                                createStockFlowReqJson.invoiceLine = stockfl.invoiceLine;
+                                createStockFlowReqJson.productCode = stockfl.productCode;
+                                createStockFlowReqJson.itemQuantity = stockfl.itemQuantity;
+                                createStockFlowReqJson.quantityInPackage = stockfl.quantityInPackage;
+                                createStockFlowReqJson.packageQuantity = stockfl.packageQuantity;
+                                createStockFlowReqJson.itemBarcode = stockfl.itemBarcode;
+                                createStockFlowReqJson.packageBarcode = stockfl.packageBarcode;
+                                createStockFlowReqJson.lineAmount = stockfl.lineAmount;
+                                createStockFlowReqJson.discountAmount = stockfl.discountAmount;
+                                createStockFlowReqJson.salesOrderId = stockfl.salesOrderId;
+                                createStockFlowReqJson.isReturnInvoice = stockfl.isReturnInvoice;
 
-                //        foreach (var stockFl in stockFls)
-                //        {
-                //            CreateStockFlowReqJson createStockFlowReqJson = new()
+                                stockFlList.Add(createStockFlowReqJson);
+                            }
 
-                //            CreateStockFlowReqJson.dataSourceCode = StockFl.DataSourceCode;
-                //            CreateStockFlowReqJson.manufacturerCode = StockFl.manufacturerCode;
-                //            CreateStockFlowReqJson.retailerCode = StockFl.retailerCode;
-                //            CreateStockFlowReqJson.retailerRefId = StockFl.retailerRefId;
-                //            CreateStockFlowReqJson.year = StockFl.year;
-                //            CreateStockFlowReqJson.month = StockFl.month;
-                //            CreateStockFlowReqJson.invoiceDate = StockFl.invoiceDate;
-                //            CreateStockFlowReqJson.invoiceDateSystem = StockFl.invoiceDateSystem;
-                //            CreateStockFlowReqJson.invoiceId = StockFl.invoiceId;
-                //            CreateStockFlowReqJson.invoiceNo = StockFl.invoiceNo;
-                //            CreateStockFlowReqJson.invoiceLine = StockFl.invoiceLine;
-                //            CreateStockFlowReqJson.productCode = StockFl.productCode;
-                //            CreateStockFlowReqJson.itemQuantity = StockFl.itemQuantity;
-                //            CreateStockFlowReqJson.quantityInPackage = StockFl.quantityInPackage;
-                //            CreateStockFlowReqJson.packageQuantity = StockFl.packageQuantity;
-                //            CreateStockFlowReqJson.itemBarcode = StockFl.itemBarcode;
-                //            CreateStockFlowReqJson.packageBarcode = StockFl.packageBarcode;
-                //            CreateStockFlowReqJson.lineAmount = StockFl.lineAmount;
-                //            CreateStockFlowReqJson.discountAmount = StockFl.discountAmount;
-                //            CreateStockFlowReqJson.salesOrderId = StockFl.salesOrderId;
-                //            CreateStockFlowReqJson.isReturnInvoice = StockFl.isReturnInvoice;
+                            string retailerJsonString = JsonSerializer.Serialize(stockFlList);
+                            HttpClientHelper httpClientHelper = new();
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/Retailers", retailerJsonString);
+                        }
 
-                //            string stockFlJsonString = JsonSerializer.Serialize(CreateStockFlowReqJson);
-
-                //            HttpClientHelper httpClientHelper = new();
-
-                //            httpClientHelper.SendPOSTRequest("username", "pasword", "endpoint", "postdata");
-
-                //        }
-
-                //        await Task.Delay(1000 * 60, stoppingToken);
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    await Task.FromCanceled(stoppingToken);
-                //}
+                        await Task.Delay(1000 * 60, stoppingToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await Task.FromCanceled(stoppingToken);
+                }
             }
         }
 

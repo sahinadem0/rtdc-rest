@@ -7,13 +7,13 @@ using System.Data.SqlClient;
 
 namespace rtdc_rest.api.Services.Concrete
 {
-    public class ClCardManager : IClCardService
+    public class StockFlManager : IStockFlService
     {
-        public async Task<List<ClCardDto>> GetClCardListAsync()
+        public async Task<List<ClCardDto>> GetStockFlAsync()
         {
             using (var connection = new SqlConnection("Server =172.16.40.20; Database = AYK2008; User ID = PG; Password = PG2007"))
-                //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
-{
+            //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
+            {
                 connection.Open();
 
                 var sql = " SELECT DataSourceCode = CASE WHEN SUBSTRING(CLC.CODE,5,1) IN('I', 'D', 'M') THEN 'AYKIZM' " +
