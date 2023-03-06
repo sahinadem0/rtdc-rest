@@ -13,7 +13,6 @@ namespace rtdc_rest.api.BackgroundServices
         {
             _service = service;
         }
-
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -64,7 +63,7 @@ namespace rtdc_rest.api.BackgroundServices
 
                             string retailerJsonString = JsonSerializer.Serialize(stockFlList);
                             HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/Retailers", retailerJsonString);
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockFlows", retailerJsonString);
                         }
 
                         await Task.Delay(1000 * 60, stoppingToken);
@@ -76,7 +75,6 @@ namespace rtdc_rest.api.BackgroundServices
                 }
             }
         }
-
         public override Task StopAsync(CancellationToken cancellationToken)
         {
             return base.StopAsync(cancellationToken);

@@ -21,7 +21,6 @@ namespace rtdc_rest.api.Helpers
 
             var content = new StringContent(postData, Encoding.UTF8, "application/json");
 
-
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, urlPathForRequest);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64String);
             requestMessage.Content = content;
@@ -32,11 +31,7 @@ namespace rtdc_rest.api.Helpers
 
             return response.Content.ReadAsStringAsync().Result;
 
-
-
-            ////////////////////////////////////////////////////////////////////
-           
-
+            #region--commentOUT
             //var jsonModel = JsonSerializer.Serialize(postData);
             //var postDataByte = Encoding.ASCII.GetBytes(jsonModel);
 
@@ -67,6 +62,7 @@ namespace rtdc_rest.api.Helpers
             //}
 
             //return responseString;
+            #endregion
         }
 
     }

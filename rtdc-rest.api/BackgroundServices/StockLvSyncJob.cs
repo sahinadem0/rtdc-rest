@@ -1,6 +1,7 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
+using System.Linq;
 using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices
@@ -12,7 +13,6 @@ namespace rtdc_rest.api.BackgroundServices
         {
             _service = service;
         }
-
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -21,42 +21,38 @@ namespace rtdc_rest.api.BackgroundServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                //var token = GetToken();
-                // await Task.Delay(1000 * 60, stoppingToken);
                 try
                 {
                     using (var scope = _service.CreateScope())
                     {
-                        var clCardService = scope.ServiceProvider.GetRequiredService<IClCardService>();
+                        var stockLvService = scope.ServiceProvider.GetRequiredService<IStockLvService>();
+                        var stockLvs = await stockLvService.GetStockLvListAsync();
+                        var grouppedStockLvList = stockLvs.GroupBy(g => g.dataSourceCode).ToList();
 
-                        var clCards = await clCardService.GetClCardListAsync();
-
-
-                        foreach (var clcard in clCards)
+                        foreach (var grouppedStockLv in grouppedStockLvList)
                         {
-                            CreateRetailerReqJson createRetailerReqJson = new();
+                            List<CreateStockLevelReqJson> stockLvList = new();
+                            foreach (var stockLv in grouppedStockLv)
+                            {
+                                CreateStockLevelReqJson createStockLevelReqJson = new();
 
-                            createRetailerReqJson.dataSourceCode = clcard.DataSourceCode;
-                            createRetailerReqJson.retailerCode = clcard.RetailerCode;
-                            createRetailerReqJson.retailerRefId = clcard.RetailerRefId;
-                            createRetailerReqJson.channelCode = clcard.ChannelCode;
-                            createRetailerReqJson.title = clcard.Title;
-                            createRetailerReqJson.email = clcard.Email;
-                            createRetailerReqJson.Phone = clcard.Phone;
-                            createRetailerReqJson.taxOffice = clcard.TaxOffice;
-                            //createRetailerReqJson.taxNumber = clcard.TaxNumber;
-                            createRetailerReqJson.contactName = clcard.ContactName;
-                            createRetailerReqJson.country = clcard.Country;
-                            createRetailerReqJson.city = clcard.City;
-                            createRetailerReqJson.district = clcard.District;
-                            createRetailerReqJson.address = clcard.Address;
-                            //createRetailerReqJson.zipCode = clcard.ZipCode;
+                                createStockLevelReqJson.dataSourceCode = stockLv.dataSourceCode;
+                                createStockLevelReqJson.manufacturerCode = stockLv.manufacturerCode;
+                                createStockLevelReqJson.stockDate = stockLv.stockDate;
+                                createStockLevelReqJson.productCode = stockLv.productCode;
+                                createStockLevelReqJson.itemQuantity = stockLv.itemQuantity;
+                                createStockLevelReqJson.quantityInPackage = stockLv.quantityInPackage;
+                                createStockLevelReqJson.packageQuantity = stockLv.packageQuantity;
+                                createStockLevelReqJson.itemBarcode = stockLv.itemBarcode;
+                                createStockLevelReqJson.packageBarcode = stockLv.packageBarcode;
+                                createStockLevelReqJson.listPrice = stockLv.listPrice;
 
-                            string retailerJsonString = JsonSerializer.Serialize(createRetailerReqJson);
+                                stockLvList.Add(createStockLevelReqJson);
+                            }
 
+                            string retailerJsonString = JsonSerializer.Serialize(stockLvList);
                             HttpClientHelper httpClientHelper = new();
-
-                            httpClientHelper.SendPOSTRequest("username", "pasword", "endpoint", "postdata");
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockLevels", retailerJsonString);
 
                         }
 
@@ -69,7 +65,6 @@ namespace rtdc_rest.api.BackgroundServices
                 }
             }
         }
-
         public override Task StopAsync(CancellationToken cancellationToken)
         {
             return base.StopAsync(cancellationToken);
