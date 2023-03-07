@@ -61,9 +61,9 @@ namespace rtdc_rest.api.BackgroundServices
                                 stockFlList.Add(createStockFlowReqJson);
                             }
 
-                            string retailerJsonString = JsonSerializer.Serialize(stockFlList);
+                            string stockFlJsonString = JsonSerializer.Serialize(stockFlList);
                             HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockFlows", retailerJsonString);
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockFlows", stockFlJsonString);
                         }
 
                         await Task.Delay(1000 * 60, stoppingToken);

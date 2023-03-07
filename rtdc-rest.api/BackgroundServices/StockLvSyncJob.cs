@@ -50,9 +50,9 @@ namespace rtdc_rest.api.BackgroundServices
                                 stockLvList.Add(createStockLevelReqJson);
                             }
 
-                            string retailerJsonString = JsonSerializer.Serialize(stockLvList);
+                            string stockLvJsonString = JsonSerializer.Serialize(stockLvList);
                             HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockLevels", retailerJsonString);
+                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockLevels", stockLvJsonString);
 
                         }
 
