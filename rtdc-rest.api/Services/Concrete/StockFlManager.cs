@@ -53,13 +53,13 @@ namespace rtdc_rest.api.Services.Concrete
                     ", invoiceId = StFichePort.LOGICALREF " +
                     ", invoiceNo = StFichePort.FICHENO " +
                     ", invoiceLine = StLinePort.STFICHELNNO " +
-                    ", ProductCode = StCardPort.CODE " +
-                    ", ItemQuantity = SUM(CASE WHEN StLinePort.IOCODE IN(1, 2) " +
+                    ", ProductCode = StCardPort.PRODUCERCODE " +
+                    ", ItemQuantity = SUM(CASE WHEN StLinePort.TRCODE IN (1,8) " +
                     "  THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 THEN 0 ELSE StLinePort.UINFO2 END) " +
                     "  WHEN StLinePort.IOCODE IN(3,4) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 " +
                     "  THEN 0 ELSE StLinePort.UINFO2 END ) *-1  ELSE 0 END ) " +
                     ", QuantityInPackage = (SELECT CONVFACT2 FROM LG_412_ITMUNITA ITMN WHERE StCardPort.LOGICALREF = ITMN.ITEMREF AND LINENR = 2 ) " +
-                    ", PackageQuantity = SUM(CASE WHEN StLinePort.IOCODE IN(1, 2) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 THEN 0 " +
+                    ", PackageQuantity = SUM(CASE WHEN StLinePort.TRCODE IN (1,8) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 THEN 0 " +
                     "  ELSE StLinePort.UINFO2 / ITMUNITA.CONVFACT2 END) " +
                     "  WHEN StLinePort.IOCODE IN(3,4) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 " +
                     "  THEN 0 ELSE StLinePort.UINFO2 / ITMUNITA.CONVFACT2 END ) *-1  ELSE 0 END ) " +
@@ -82,9 +82,10 @@ namespace rtdc_rest.api.Services.Concrete
                     "  WHERE StLinePort.LINETYPE IN(0,1) " +
                     "  AND StLinePort.SOURCEINDEX IN('35','7','42','50') AND StFichePort.CANCELLED = 0 " +
                     "  AND StCardPort.SPECODE IN('3M','BPT','WL') " +
-                    "  GROUP BY StLinePort.SOURCEINDEX,StCardPort.SPECODE,StCardPort.CODE,StCardPort.LOGICALREF,EK.URUNBARKODU,EK.KOLİBARKODU,CLC.CODE, " +
+                    "  GROUP BY StLinePort.SOURCEINDEX,StCardPort.SPECODE,StCardPort.PRODUCERCODE,StCardPort.LOGICALREF,EK.URUNBARKODU,EK.KOLİBARKODU,CLC.CODE, " +
                     "  CLC.LOGICALREF,StFichePort.CAPIBLOCK_CREADEDDATE,StFichePort.LOGICALREF,StLinePort.STFICHELNNO,StFichePort.FICHENO, " +
-                    " StLinePort.DISTCOST,StLinePort.ORDFICHEREF,StFichePort.TRCODE ";
+                    " StLinePort.DISTCOST,StLinePort.ORDFICHEREF,StFichePort.TRCODE " +
+                    " ORDER BY StFichePort.CAPIBLOCK_CREADEDDATE DESC";
 
 
                 //sql = " select * from LG_001_CLCARD ";
