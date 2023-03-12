@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.Helpers
 {
@@ -13,7 +14,13 @@ namespace rtdc_rest.api.Helpers
         }
         public string SendPOSTRequest(string userName, string password, string endPoint, string postData)
          {
-            string urlPathForRequest = "https://rtdc-apitest.engingrup.com/api/AYK";
+            string apiUrl = Configuration.getApiUrl();
+            string urlPathForRequest = apiUrl.ToString();
+
+            #region commentOUT
+            //string urlPathForRequest = "https://rtdc-apitest.engingrup.com/api/AYK";
+            #endregion
+
             urlPathForRequest = urlPathForRequest + endPoint;
 
             var authenticationString = $"{userName}:{password}";
