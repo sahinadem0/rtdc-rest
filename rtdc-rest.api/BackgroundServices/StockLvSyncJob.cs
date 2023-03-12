@@ -3,6 +3,7 @@ using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
 using System.Linq;
 using System.Text.Json;
+using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.BackgroundServices
 {
@@ -13,6 +14,10 @@ namespace rtdc_rest.api.BackgroundServices
         {
             _service = service;
         }
+
+        string apiUserName = Configuration.getApiUserName();
+        string apiPassword = Configuration.getApiPassword();
+        string apiEndPoint = Configuration.getStockLevels();
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -52,7 +57,7 @@ namespace rtdc_rest.api.BackgroundServices
 
                             string stockLvJsonString = JsonSerializer.Serialize(stockLvList);
                             HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest("aykanlar", "AyKanLar&2023", "/StockLevels", stockLvJsonString);
+                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), apiEndPoint.ToString(), stockLvJsonString);
 
                         }
 

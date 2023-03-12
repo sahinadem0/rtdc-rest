@@ -4,6 +4,8 @@ using rtdc_rest.api.Models;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
 using System.Data.SqlClient;
+using rtdc_rest.api.config;
+using System.Data;
 
 namespace rtdc_rest.api.Services.Concrete
 {
@@ -11,10 +13,16 @@ namespace rtdc_rest.api.Services.Concrete
     {
         public async Task<List<ClCardDto>> GetClCardListAsync()
         {
-            using (var connection = new SqlConnection("Server =172.16.40.20; Database = AYK2008; User ID = PG; Password = PG2007"))
-                //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
-{
-                connection.Open();
+            string connection = Configuration.getLogoConnection();
+
+            #region commentOUT
+            //using (var connection = new SqlConnection("Server =172.16.40.20; Database = AYK2008; User ID = PG; Password = PG2007"))
+            //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
+            #endregion
+
+            {
+                SqlConnection connect = new SqlConnection(connection);
+                connect.Open();
 
                 var sql = " SELECT DataSourceCode = CASE WHEN SUBSTRING(CLC.CODE,5,1) IN('I', 'D', 'M') THEN 'AYKIZM' " +
                     "WHEN SUBSTRING(CLC.CODE,5,1) IN('A') THEN 'AYKANT' " +
@@ -39,8 +47,7 @@ namespace rtdc_rest.api.Services.Concrete
                     "AND NOT(CLC.CODE LIKE 'DC%' ) " +
                     "AND CLC.TAXNR IS NOT NULL AND CLC.TAXNR<>'' AND CLC.DISTRICT IS NOT NULL AND CLC.DISTRICT<>'' ";
 
-                //sql = " select * from LG_001_CLCARD ";
-                var result = connection.Query<ClCardDto>(sql).ToList();
+                var result = connect.Query<ClCardDto>(sql).ToList();
                 return result;
             }
         }
