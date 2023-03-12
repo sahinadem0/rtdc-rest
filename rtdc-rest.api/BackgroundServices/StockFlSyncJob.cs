@@ -17,7 +17,7 @@ namespace rtdc_rest.api.BackgroundServices
 
         string apiUserName = Configuration.getApiUserName();
         string apiPassword = Configuration.getApiPassword();
-        string apiEndpoint = Configuration.getRetailers();
+        string apiEndPoint = Configuration.getStockFlows();
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -68,7 +68,7 @@ namespace rtdc_rest.api.BackgroundServices
 
                             string stockFlJsonString = JsonSerializer.Serialize(stockFlList);
                             HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), apiEndpoint.ToString(), stockFlJsonString);
+                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), apiEndPoint.ToString(), stockFlJsonString);
                         }
 
                         await Task.Delay(1000 * 60, stoppingToken);

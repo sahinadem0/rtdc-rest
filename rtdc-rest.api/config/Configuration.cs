@@ -19,7 +19,15 @@ namespace rtdc_rest.api.config
         }
         public static string getRetailers()
         {
-            return System.Configuration.ConfigurationManager.AppSettings["ApiPassword"];
+            return System.Configuration.ConfigurationManager.AppSettings["Retailer"];
+        }
+        public static string getStockLevels()
+        {
+            return System.Configuration.ConfigurationManager.AppSettings["StockLevel"];
+        }
+        public static string getStockFlows()
+        {
+            return System.Configuration.ConfigurationManager.AppSettings["StockFlow"];
         }
         public static string getLogoConnection()
         {
