@@ -4,6 +4,7 @@ using rtdc_rest.api.Models;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
 using System.Data.SqlClient;
+using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.Services.Concrete
 {
@@ -11,10 +12,10 @@ namespace rtdc_rest.api.Services.Concrete
     {
         public async Task<List<StockLvDto>> GetStockLvListAsync()
         {
-            using (var connection = new SqlConnection("Server =172.16.40.20; Database = AYK2008; User ID = PG; Password = PG2007"))
-            //Server = 172.16.40.20; Database = AYK2008; Persist Security Info = True; User ID = PG; Password = PG2007
+            string connection = Configuration.getLogoConnection();            
             {
-                connection.Open();
+                SqlConnection connect = new SqlConnection(connection);
+                connect.Open(); 
 
                 var sql = " SELECT DataSourceCode = CASE StLinePort.SOURCEINDEX WHEN 35 THEN 'AYKIZM' WHEN 7 THEN 'AYKANT'" +
                     "  WHEN 42 THEN 'AYKKNY' WHEN 50 THEN 'AYKIST' ELSE 'TANIMSIZ' END " +
@@ -40,8 +41,7 @@ namespace rtdc_rest.api.Services.Concrete
                     "  AND StCardPort.SPECODE IN('3M','BPT','WL') " +
                     "  GROUP BY StLinePort.SOURCEINDEX,StCardPort.SPECODE,StCardPort.PRODUCERCODE,StCardPort.LOGICALREF,EK.URUNBARKODU ,EK.KOLİBARKODU ";
 
-                //sql = " select * from LG_001_CLCARD ";
-                var result = connection.Query<StockLvDto>(sql).ToList();
+                var result = connect.Query<StockLvDto>(sql).ToList();
                 return result;
             }
         }
