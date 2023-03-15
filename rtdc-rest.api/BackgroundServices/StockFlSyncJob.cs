@@ -3,21 +3,18 @@ using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
 using System.Linq;
 using System.Text.Json;
-using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.BackgroundServices
 {
     public class StockFlSyncJob : BackgroundService
     {
         public IServiceProvider _service { get; }
-        public StockFlSyncJob(IServiceProvider service)
+        private readonly IConfiguration _configuration;
+        public StockFlSyncJob(IServiceProvider service, IConfiguration configuration)
         {
             _service = service;
+            _configuration = configuration;
         }
-
-        string apiUserName = Configuration.getApiUserName();
-        string apiPassword = Configuration.getApiPassword();
-        string apiEndPoint = Configuration.getStockFlows();
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -30,6 +27,10 @@ namespace rtdc_rest.api.BackgroundServices
                 {
                     using (var scope = _service.CreateScope())
                     {
+                        string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
+                        string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
+                        string stockFlow = _configuration.GetSection("AppSettings:StockFlow").Value;
+
                         var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
                         var stockFls = await stockFlService.GetStockFlListAsync();
                         var grouppedStockFlList = stockFls.GroupBy(g => g.dataSourceCode).ToList();
@@ -67,8 +68,8 @@ namespace rtdc_rest.api.BackgroundServices
                             }
 
                             string stockFlJsonString = JsonSerializer.Serialize(stockFlList);
-                            HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), apiEndPoint.ToString(), stockFlJsonString);
+                            HttpClientHelper httpClientHelper = new(_configuration);
+                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), stockFlow.ToString(), stockFlJsonString);
                         }
 
                         await Task.Delay(1000 * 60, stoppingToken);

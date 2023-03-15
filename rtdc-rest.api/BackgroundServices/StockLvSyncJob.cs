@@ -1,23 +1,19 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
-using System.Linq;
 using System.Text.Json;
-using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.BackgroundServices
 {
     public class StockLvSyncJob : BackgroundService
     {
         public IServiceProvider _service { get; }
-        public StockLvSyncJob(IServiceProvider service)
+        private readonly IConfiguration _configuration;
+        public StockLvSyncJob(IServiceProvider service, IConfiguration configuration)
         {
             _service = service;
+            _configuration = configuration;
         }
-
-        string apiUserName = Configuration.getApiUserName();
-        string apiPassword = Configuration.getApiPassword();
-        string apiEndPoint = Configuration.getStockLevels();
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -30,6 +26,11 @@ namespace rtdc_rest.api.BackgroundServices
                 {
                     using (var scope = _service.CreateScope())
                     {
+
+                        string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
+                        string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
+                        string stockLevel = _configuration.GetSection("AppSettings:StockLevel").Value;
+
                         var stockLvService = scope.ServiceProvider.GetRequiredService<IStockLvService>();
                         var stockLvs = await stockLvService.GetStockLvListAsync();
                         var grouppedStockLvList = stockLvs.GroupBy(g => g.dataSourceCode).ToList();
@@ -56,8 +57,8 @@ namespace rtdc_rest.api.BackgroundServices
                             }
 
                             string stockLvJsonString = JsonSerializer.Serialize(stockLvList);
-                            HttpClientHelper httpClientHelper = new();
-                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), apiEndPoint.ToString(), stockLvJsonString);
+                            HttpClientHelper httpClientHelper = new(_configuration);
+                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), stockLevel.ToString(), stockLvJsonString);
 
                         }
 

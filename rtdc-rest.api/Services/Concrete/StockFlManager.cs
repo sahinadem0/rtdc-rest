@@ -1,18 +1,21 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Hosting.Server;
-using rtdc_rest.api.Models;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
 using System.Data.SqlClient;
-using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.Services.Concrete
 {
     public class StockFlManager : IStockFlService
     {
+        private readonly IConfiguration _configuration;
+        public StockFlManager(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public async Task<List<StockFlDto>> GetStockFlListAsync()
         {
-            string connection = Configuration.getLogoConnection();            
+            string connection = _configuration.GetSection("AppSettings:DbConnection").Value;
+
             {
                 SqlConnection connect = new SqlConnection(connection);
                 connect.Open();

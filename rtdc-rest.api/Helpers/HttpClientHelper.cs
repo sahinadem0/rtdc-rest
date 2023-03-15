@@ -1,20 +1,24 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
-using rtdc_rest.api.config;
 
 namespace rtdc_rest.api.Helpers
 {
     public class HttpClientHelper
     {
+        private readonly IConfiguration _configuration;
+
+        public HttpClientHelper(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public HttpClientHelper()
         {
-
+            
         }
         public string SendPOSTRequest(string userName, string password, string endPoint, string postData)
          {
-            string apiUrl = Configuration.getApiUrl();
+            string apiUrl = _configuration.GetSection("AppSettings:ApiUrl").Value;
             string urlPathForRequest = apiUrl.ToString();
 
             #region commentOUT
