@@ -24,7 +24,7 @@ namespace rtdc_rest.api.Services.Concrete
 
                 var sql = " SELECT DataSourceCode = CASE StLinePort.SOURCEINDEX WHEN 35 THEN 'AYKIZM' WHEN 7 THEN 'AYKANT'" +
                     "  WHEN 42 THEN 'AYKKNY' WHEN 50 THEN 'AYKIST' ELSE 'TANIMSIZ' END " +
-                    ", ManufacturerCode = CASE StCardPort.SPECODE WHEN 'BPT' THEN 'BYR' ELSE StCardPort.SPECODE END " +
+                    ", ManufacturerCode = CASE StCardPort.SPECODE WHEN 'BP' THEN 'BYR' ELSE StCardPort.SPECODE END " +
                     ", StockDate = getdate() " +
                     ", ProductCode = StCardPort.PRODUCERCODE " +
                     ", ItemQuantity = SUM(CASE WHEN StLinePort.IOCODE IN(1, 2) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2 = 0 THEN 0 ELSE StLinePort.UINFO2 END) " +
