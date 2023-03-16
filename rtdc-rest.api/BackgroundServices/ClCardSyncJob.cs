@@ -2,7 +2,7 @@
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
 using System.Text.Json;
-
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace rtdc_rest.api.BackgroundServices
 {
@@ -62,12 +62,16 @@ namespace rtdc_rest.api.BackgroundServices
                             }
 
                             string retailerJsonString = JsonSerializer.Serialize(clcardList);
+                            LogFile("süre hesabı BİTİŞ", "sipariş sayısı:" + retailerJsonString.ToString(), "", "true", "");
 
                             HttpClientHelper httpClientHelper = new(_configuration);
 
-                          var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), retailer.ToString(), retailerJsonString);
+                            var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), retailer.ToString(), retailerJsonString);
+
+                            LogFile("süre hesabı BİTİŞ", "sipariş sayısı:" + response.ToString(), "", "true", "");
+
                         }
-                       
+                        
                         await Task.Delay(1000 * 60, stoppingToken);
                     }
                 }
@@ -76,6 +80,26 @@ namespace rtdc_rest.api.BackgroundServices
                     await Task.FromCanceled(stoppingToken);
                 }
             }
+        }
+        public void LogFile(string logCaption, string clcard, string grouppedClcard, string isSuccess, string response)
+        {
+            StreamWriter log;
+            if (!File.Exists(@"C:\ImageTrack.log"))
+            {
+                log = new StreamWriter(@"C:\ImageTrack.log");
+            }
+            else
+            {
+                log = File.AppendText(@"C:\ImageTrack.log");
+            }
+            log.WriteLine("------------------------");
+            log.WriteLine("Hata Mesajı:" + response);
+            log.WriteLine("salesArt Müşteri:" + clcard + " -> Müşteri Grubu : " + grouppedClcard);
+            log.WriteLine("Başarılı mı ? :" + isSuccess);
+            log.WriteLine("Log Adı:" + logCaption);
+            log.WriteLine("Log Zamanı:" + DateTime.Now);
+
+            log.Close();
         }
         public override Task StopAsync(CancellationToken cancellationToken)
         {
