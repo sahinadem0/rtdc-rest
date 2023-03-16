@@ -15,7 +15,6 @@ namespace rtdc_rest.api.BackgroundServices
             _service = service;
             _configuration = configuration;
         }
-
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             return base.StartAsync(cancellationToken);
@@ -31,7 +30,6 @@ namespace rtdc_rest.api.BackgroundServices
                         string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
                         string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
                         string retailer = _configuration.GetSection("AppSettings:Retailer").Value;
-                        //string apiUrl = _configuration.GetSection("AppSettings:ApiUrl").Value;
 
                         var clCardService = scope.ServiceProvider.GetRequiredService<IClCardService>();
                         var clCards = await clCardService.GetClCardListAsync();
