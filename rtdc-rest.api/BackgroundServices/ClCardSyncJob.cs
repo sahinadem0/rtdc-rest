@@ -62,13 +62,13 @@ namespace rtdc_rest.api.BackgroundServices
                             }
 
                             string retailerJsonString = JsonSerializer.Serialize(clcardList);
-                            LogFile("süre hesabı BİTİŞ", "sipariş sayısı:" + retailerJsonString.ToString(), "", "true", "");
+                            LogFile("Hesaplanan süre", "Müşteri Datası:" + retailerJsonString.ToString(), "", "true", "");
 
                             HttpClientHelper httpClientHelper = new(_configuration);
 
                             var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), retailer.ToString(), retailerJsonString);
 
-                            LogFile("süre hesabı BİTİŞ", "sipariş sayısı:" + response.ToString(), "", "true", "");
+                            LogFile("Hesaplanan süre", "Data Logs:" + response.ToString(), "", "true", "");
 
                         }
                         
@@ -84,19 +84,19 @@ namespace rtdc_rest.api.BackgroundServices
         public void LogFile(string logCaption, string clcard, string grouppedClcard, string isSuccess, string response)
         {
             StreamWriter log;
-            if (!File.Exists(@"C:\ImageTrack.log"))
+            if (!File.Exists(@"C:\customerdata.log"))
             {
-                log = new StreamWriter(@"C:\ImageTrack.log");
+                log = new StreamWriter(@"C:\customerdata.log");
             }
             else
             {
-                log = File.AppendText(@"C:\ImageTrack.log");
+                log = File.AppendText(@"C:\customerdata.log");
             }
             log.WriteLine("------------------------");
-            log.WriteLine("Hata Mesajı:" + response);
-            log.WriteLine("salesArt Müşteri:" + clcard + " -> Müşteri Grubu : " + grouppedClcard);
-            log.WriteLine("Başarılı mı ? :" + isSuccess);
-            log.WriteLine("Log Adı:" + logCaption);
+            log.WriteLine("Hata Mesajı:" + response.ToString() );
+            log.WriteLine("Müşteri:" + clcard.ToString() + " -> Bölge : " + grouppedClcard.ToString());
+            log.WriteLine("Başarılı mı ? :" + isSuccess.ToString());
+            log.WriteLine("Log Adı:" + logCaption.ToString() );
             log.WriteLine("Log Zamanı:" + DateTime.Now);
 
             log.Close();

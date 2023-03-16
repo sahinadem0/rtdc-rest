@@ -45,7 +45,7 @@ namespace rtdc_rest.api.Services.Concrete
                     "FROM LG_" + companyCode + "_CLCARD CLC WHERE ACTIVE = 0 " +
                     "AND SUBSTRING(CLC.CODE,1,1) NOT IN('-','0','1','2','3','4','5','6','V') " +
                     "AND NOT(CLC.CODE LIKE 'DC%' ) " +
-                    "AND CLC.TAXNR IS NOT NULL AND CLC.TAXNR<>'' AND CLC.DISTRICT IS NOT NULL AND CLC.DISTRICT<>'' ";
+                    "AND CLC.TAXNR IS NOT NULL AND CLC.TAXNR <> '' AND CLC.DISTRICT IS NOT NULL AND CLC.DISTRICT <> '' ";
 
                 var result = connect.Query<ClCardDto>(sql).ToList();
                 return result;

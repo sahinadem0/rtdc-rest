@@ -57,8 +57,14 @@ namespace rtdc_rest.api.BackgroundServices
                             }
 
                             string stockLvJsonString = JsonSerializer.Serialize(stockLvList);
+
+                            LogFile("Hesaplanan süre", "Stok Datası:" + stockLvJsonString.ToString(), "", "true", "");
+
                             HttpClientHelper httpClientHelper = new(_configuration);
+
                             var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), stockLevel.ToString(), stockLvJsonString);
+
+                            LogFile("Hesaplanan süre", "Data Logs:" + response.ToString(), "", "true", "");
 
                         }
 
@@ -70,6 +76,26 @@ namespace rtdc_rest.api.BackgroundServices
                     await Task.FromCanceled(stoppingToken);
                 }
             }
+        }
+        public void LogFile(string logCaption, string stockLv, string grouppedStockLv, string isSuccess, string response)
+        {
+            StreamWriter log;
+            if (!File.Exists(@"C:\stockdata.log"))
+            {
+                log = new StreamWriter(@"C:\stockdata.log");
+            }
+            else
+            {
+                log = File.AppendText(@"C:\stockdata.log");
+            }
+            log.WriteLine("------------------------");
+            log.WriteLine("Hata Mesajı:" + response.ToString());
+            log.WriteLine("Stok:" + stockLv.ToString() + " -> Bölge : " + grouppedStockLv.ToString());
+            log.WriteLine("Başarılı mı ? :" + isSuccess.ToString());
+            log.WriteLine("Log Adı:" + logCaption.ToString());
+            log.WriteLine("Log Zamanı:" + DateTime.Now);
+
+            log.Close();
         }
         public override Task StopAsync(CancellationToken cancellationToken)
         {
