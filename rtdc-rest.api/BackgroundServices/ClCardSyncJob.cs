@@ -1,6 +1,7 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
+using Serilog;
 using System.Text.Json;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -30,6 +31,7 @@ namespace rtdc_rest.api.BackgroundServices
                         string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
                         string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
                         string retailer = _configuration.GetSection("AppSettings:Retailer").Value;
+                        string retailerDelay = _configuration.GetSection("AppSettings:RetailerDelay").Value;
 
                         var clCardService = scope.ServiceProvider.GetRequiredService<IClCardService>();
                         var clCards = await clCardService.GetClCardListAsync();
@@ -58,7 +60,7 @@ namespace rtdc_rest.api.BackgroundServices
                                 createRetailerReqJson.address = clcard.Address;
                                 createRetailerReqJson.zipCode = string.IsNullOrEmpty(clcard.ZipCode) ? 0 : int.Parse(clcard.ZipCode);
 
-                                clcardList.Add(createRetailerReqJson);
+                                clcardList.Add(createRetailerReqJson);                               
                             }
 
                             string retailerJsonString = JsonSerializer.Serialize(clcardList);
@@ -68,11 +70,11 @@ namespace rtdc_rest.api.BackgroundServices
 
                             var response = httpClientHelper.SendPOSTRequest(apiUserName.ToString(), apiPassword.ToString(), retailer.ToString(), retailerJsonString);
 
-                            LogFile("Hesaplanan süre", "Data Logs:" + response.ToString(), "", "true", "");
+                            LogFile("Hesaplanan süre", "Data Logs:" + response.ToString(), "", "true", "");                           
 
                         }
                         
-                        await Task.Delay(1000 * 60, stoppingToken);
+                        await Task.Delay(int.Parse (retailerDelay) * 60, stoppingToken);
                     }
                 }
                 catch (Exception ex)

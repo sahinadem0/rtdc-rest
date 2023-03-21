@@ -12,8 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //builder.Services.AddHostedService<ClCardSyncJob>();
-//builder.Services.AddHostedService<StockFlSyncJob>();
-builder.Services.AddHostedService<StockLvSyncJob>();
+builder.Services.AddHostedService<StockFlSyncJob>();
+//builder.Services.AddHostedService<StockLvSyncJob>();
 builder.Services.AddScoped<IClCardService,ClCardManager>();
 builder.Services.AddScoped<IStockFlService, StockFlManager>();
 builder.Services.AddScoped<IStockLvService, StockLvManager>();
