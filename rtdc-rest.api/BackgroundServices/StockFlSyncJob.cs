@@ -31,9 +31,11 @@ namespace rtdc_rest.api.BackgroundServices
                         string stockFlow = _configuration.GetSection("AppSettings:StockFlow").Value;
                         string stockFlowDelay = _configuration.GetSection("AppSettings:StockFlowDelay").Value;
 
+
                         var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
                         var stockFls = await stockFlService.GetStockFlListAsync();
-                        var grouppedStockFlList = stockFls.GroupBy(g => g.dataSourceCode).ToList();
+                        //var grouppedStockFlList = stockFls.GroupBy(g => g.dataSourceCode).ToList();
+                        var grouppedStockFlList = stockFls.GroupBy(g => new { g.dataSourceCode, g.manufacturerCode }).ToList();
 
                         foreach (var grouppedStockFl in grouppedStockFlList)
                         {
