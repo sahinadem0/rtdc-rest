@@ -63,7 +63,7 @@ namespace rtdc_rest.api.BackgroundServices
                                 createStockFlowReqJson.lineAmount = stockfl.lineAmount;
                                 createStockFlowReqJson.discountAmount = stockfl.discountAmount;
                                 createStockFlowReqJson.salesOrderId = stockfl.salesOrderId;
-                                createStockFlowReqJson.isReturnInvoice = bool.Parse(stockfl.isReturnInvoice);
+                                createStockFlowReqJson.isReturnInvoice = stockfl.isReturnInvoice;
 
                                 stockFlList.Add(createStockFlowReqJson);
                             }
