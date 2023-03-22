@@ -1,6 +1,4 @@
-﻿using rtdc_rest.api.Models;
-using rtdc_rest.api.Models.Dtos;
-using System.Threading.Tasks;
+﻿using rtdc_rest.api.Models.Dtos;
 
 namespace rtdc_rest.api.Services.Abstract
 {
