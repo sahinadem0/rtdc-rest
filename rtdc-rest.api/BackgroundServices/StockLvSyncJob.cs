@@ -30,6 +30,7 @@ namespace rtdc_rest.api.BackgroundServices
                         string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
                         string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
                         string stockLevel = _configuration.GetSection("AppSettings:StockLevel").Value;
+                        string stockLevelDelay = _configuration.GetSection("AppSettings:StockLevelDelay").Value;
 
                         var stockLvService = scope.ServiceProvider.GetRequiredService<IStockLvService>();
                         var stockLvs = await stockLvService.GetStockLvListAsync();
@@ -68,7 +69,7 @@ namespace rtdc_rest.api.BackgroundServices
 
                         }
 
-                        await Task.Delay(1000 * 60, stoppingToken);
+                        await Task.Delay(int.Parse(stockLevelDelay) * 60, stoppingToken);
                     }
                 }
                 catch (Exception ex)

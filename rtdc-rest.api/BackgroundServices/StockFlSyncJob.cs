@@ -1,7 +1,6 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
-using System.Linq;
 using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices
@@ -30,6 +29,7 @@ namespace rtdc_rest.api.BackgroundServices
                         string apiUserName = _configuration.GetSection("AppSettings:ApiUserName").Value;
                         string apiPassword = _configuration.GetSection("AppSettings:ApiPassword").Value;
                         string stockFlow = _configuration.GetSection("AppSettings:StockFlow").Value;
+                        string stockFlowDelay = _configuration.GetSection("AppSettings:StockFlowDelay").Value;
 
                         var stockFlService = scope.ServiceProvider.GetRequiredService<IStockFlService>();
                         var stockFls = await stockFlService.GetStockFlListAsync();
@@ -77,7 +77,7 @@ namespace rtdc_rest.api.BackgroundServices
                             LogFile("Hesaplanan süre", "Data Logs:" + response.ToString(), "", "true", "");
                         }
 
-                        await Task.Delay(1000 * 60, stoppingToken);
+                        await Task.Delay(int.Parse(stockFlowDelay) * 60, stoppingToken);
                     }
                 }
                 catch (Exception ex)
