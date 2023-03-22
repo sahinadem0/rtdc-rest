@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using rtdc_rest.api.Models;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
 using System.Data.SqlClient;
@@ -8,35 +7,41 @@ namespace rtdc_rest.api.Services.Concrete
 {
     public class ClCardManager : IClCardService
     {
+        private readonly IConfiguration _configuration;
+        public ClCardManager(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public async Task<List<ClCardDto>> GetClCardListAsync()
         {
-            using (var connection = new SqlConnection(" Server =.; Database = tiger3; Trusted_Connection = True; MultipleActiveResultSets = true"))
-{
-                connection.Open();
+            string connection = _configuration.GetSection("AppSettings:DbConnection").Value;
+            string companyCode = _configuration.GetSection("AppSettings:CompanyCode").Value;
 
-                var sql = " SELECT dataSourceCode =  CASE WHEN SUBSTRING(CLC.CODE,5,1) IN ('I','D','M') THEN 'AYKIZM' " +
-                    " WHEN SUBSTRING(CLC.CODE,5,1) IN ('A') THEN 'AYKANT'  WHEN SUBSTRING(CLC.CODE,5,1) IN ('K') THEN 'AYKKNY' " +
-                    " WHEN SUBSTRING(CLC.CODE,5,1) IN ('B') THEN 'AYKIST'  ELSE 'TANIMSIZ' END, " +
-                    "  retailerCode = clc.code,  retailerRefId = clc.LOGICALREF, channelCode = 'HFS', title = clc.DEFINITION_, " +
-                    " email = clc.EMAILADDR, phone = clc.TELNRS1, taxOffice = clc.TAXOFFICE, taxNumber = clc.TAXNR, contactName = clc.INCHARGE, " +
-                    " country = clc.COUNTRY, city = clc.CITY, district = clc.DISTRICT, aaddress = clc. ADDR1, " +
-                    " zipCode = clc.POSTCODE  " +
-                    " FROM LG_001_CLCARD CLC WHERE ACTIVE = 0 " +
-                    " AND CLC.CODE NOT LIKE '-%' " +
-                    " AND CLC.CODE NOT LIKE '0%' " +
-                    " AND CLC.CODE NOT LIKE '1%' " +
-                    " AND CLC.CODE NOT LIKE '2%' " +
-                    " AND CLC.CODE NOT LIKE '3%' " +
-                    " AND CLC.CODE NOT LIKE '4%' " +
-                    " AND CLC.CODE NOT LIKE '5%' " +
-                    " AND CLC.CODE NOT LIKE '6%' " +
-                    " AND CLC.CODE NOT LIKE 'DC%' " +
-                    " AND CLC.CODE NOT LIKE 'V%' " +
-                    " AND CLC.ACTIVE=0 ";
+            {
+                SqlConnection connect = new SqlConnection(connection);
+                connect.Open();
 
+                var sql = " SELECT DataSourceCode = CASE WHEN SUBSTRING(CLC.CODE,5,1) IN('I', 'D', 'M') THEN 'AYKIZM' " +
+                    "WHEN SUBSTRING(CLC.CODE,5,1) IN('A') THEN 'AYKANT' " +
+                    "WHEN SUBSTRING(CLC.CODE,5,1) IN('K') THEN 'AYKKNY' " +
+                    "WHEN SUBSTRING(CLC.CODE,5,1) IN('B', 'S') THEN 'AYKIST' ELSE 'TANIMSIZ' END " +
+                    ",RetailerCode = CLC.code " +
+                    ",RetailerRefId = CLC.LOGICALREF " +
+                    ",ChannelCode = 'HFS' " +
+                    ",Title = CLC.DEFINITION_ " +
+                    ",Email = CLC.EMAILADDR " +
+                    ",Phone = CLC.TELNRS1 " +
+                    ",TaxOffice = CLC.TAXOFFICE " +
+                    ",TaxNumber = CASE WHEN ISPERSCOMP = 1 THEN CLC.TCKNO ELSE CLC.TAXNR END " +
+                    ",ContactName = CLC.INCHARGE " +
+                    ",Country = CLC.COUNTRY " +
+                    ",City = CLC.CITY " +
+                    ",District = CASE WHEN CLC.TOWN = '' THEN 'MERKEZ' ELSE CLC.TOWN END " +
+                    ",Address = CLC.ADDR1 + CLC.ADDR1 " +
+                    ",ZipCode = CLC.POSTCODE " +
+                    "FROM LG_" + companyCode + "_CLCARD CLC WHERE ACTIVE = 0 AND SUBSTRING(CLC.CODE,5,2) IN('I.', 'D.', 'M.', 'A.', 'K.', 'B.', 'S.')";
 
-                //sql = " select * from LG_001_CLCARD ";
-                var result = connection.Query<ClCardDto>(sql).ToList();
+                var result = connect.Query<ClCardDto>(sql).ToList();
                 return result;
             }
         }

@@ -1,6 +1,6 @@
-﻿namespace rtdc_rest.api.Models
+﻿namespace rtdc_rest.api.Models.Dtos
 {
-    internal class CreateStockLevelRequest
+    public class StockLvDto
     {
         public string dataSourceCode { get; set; }
         public string manufacturerCode { get; set; }

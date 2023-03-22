@@ -2,8 +2,8 @@
 
 namespace rtdc_rest.api.Services.Abstract
 {
-    public interface IClCardService
+    public interface IStockFlService
     {
-        Task<List<ClCardDto>> GetClCardListAsync();
+        Task<List<StockFlDto>> GetStockFlListAsync();
     }
 }
