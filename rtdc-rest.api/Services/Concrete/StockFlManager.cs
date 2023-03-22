@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
-using System;
 using System.Data.SqlClient;
 
 namespace rtdc_rest.api.Services.Concrete

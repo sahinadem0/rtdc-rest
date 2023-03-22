@@ -1,7 +1,6 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
-using System.Linq;
 using System.Text.Json;
 
 namespace rtdc_rest.api.BackgroundServices

@@ -1,10 +1,7 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Hosting.Server;
-using rtdc_rest.api.Models;
 using rtdc_rest.api.Models.Dtos;
 using rtdc_rest.api.Services.Abstract;
 using System.Data.SqlClient;
-using System.Data;
 
 namespace rtdc_rest.api.Services.Concrete
 {

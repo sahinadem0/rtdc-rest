@@ -1,9 +1,7 @@
 ﻿using rtdc_rest.api.Helpers;
 using rtdc_rest.api.Models;
 using rtdc_rest.api.Services.Abstract;
-using Serilog;
 using System.Text.Json;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace rtdc_rest.api.BackgroundServices
 {
