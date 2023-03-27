@@ -45,7 +45,7 @@ namespace rtdc_rest.api.Services.Concrete
                     "LEFT OUTER JOIN LG_"+ companyCode +"_ITMUNITA ITMUNITA1 WITH(NOLOCK) ON StCardPort.LOGICALREF = ITMUNITA1.ITEMREF AND ITMUNITA1.LINENR = '4' "+
                     "LEFT OUTER JOIN LG_XT1001_"+ companyCode +" AS EK ON StCardPort.LOGICALREF = EK.PARLOGREF "+
                     "WHERE StLinePort.LINETYPE IN(0,1)  AND StLinePort.SOURCEINDEX IN('35','7','42','50')  AND StFichePort.CANCELLED = 0 "+
-                    "AND StCardPort.SPECODE IN('3M','BPT','WL') "+
+                    "AND StCardPort.SPECODE IN('3M','BPT','WL') AND StFichePort.DATE_ <= CASE WHEN @MUTABAKAT = "+ int.Parse(mutabakat) +" THEN DATEADD(ss, -1, DATEADD(month, DATEDIFF(month, 0, getdate()), 0)) ELSE StFichePort.DATE_ END " +
                     "GROUP BY StLinePort.SOURCEINDEX,StCardPort.SPECODE,StCardPort.code,StCardPort.LOGICALREF,EK.URUNBARKODU ,EK.KOLİBARKODU " +
                     "HAVING SUM(CASE WHEN  StLinePort.IOCODE IN (1,2) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2=0 THEN 0 ELSE StLinePort.UINFO2 END) "+
                     "WHEN StLinePort.IOCODE IN (3,4) THEN StLinePort.AMOUNT * (CASE WHEN ITMUNITA.CONVFACT2=0 THEN 0 ELSE StLinePort.UINFO2 END ) *-1 ELSE 0 END ) <>0" ;

@@ -51,7 +51,7 @@ namespace rtdc_rest.api.Services.Concrete
                     "INNER JOIN LG_" + companyCode + "_" + season + "_STFICHE STF ON STF.LOGICALREF = STL.STFICHEREF " +
                     "INNER JOIN LG_" + companyCode + "_CLCARD CLC ON CLC.LOGICALREF = STL.CLIENTREF " +
                     "INNER JOIN LG_" + companyCode + "_" + season + "_INVOICE INV ON INV.LOGICALREF = STF.INVOICEREF " +
-                    "INNER JOIN LG_" + companyCode + "_" + season + "_ORFICHE ORF ON STL.ORDFICHEREF = ORF.LOGICALREF " +
+                    "LEFT JOIN LG_" + companyCode + "_" + season + "_ORFICHE ORF ON STL.ORDFICHEREF = ORF.LOGICALREF " +
                     "INNER JOIN LG_" + companyCode + "_ITMUNITA ITM2 ON ITM2.ITEMREF = IT.LOGICALREF " +
                     "AND ITM2.LINENR = '2' LEFT OUTER JOIN LG_XT1001_" + companyCode + " AS EK ON IT.LOGICALREF = EK.PARLOGREF WHERE STL.CANCELLED = '0' AND STL.TRCODE IN ('3', '8') " +
                     "AND STL.SOURCEINDEX IN ( '34', '35', '6', '7', '41', '42', '50' ) " +
