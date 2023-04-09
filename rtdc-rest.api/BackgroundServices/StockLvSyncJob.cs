@@ -34,7 +34,8 @@ namespace rtdc_rest.api.BackgroundServices
 
                         var stockLvService = scope.ServiceProvider.GetRequiredService<IStockLvService>();
                         var stockLvs = await stockLvService.GetStockLvListAsync();
-                        var grouppedStockLvList = stockLvs.GroupBy(g => g.dataSourceCode).ToList();
+                        //var grouppedStockLvList = stockLvs.GroupBy(g => g.dataSourceCode).ToList();
+                        var grouppedStockLvList = stockLvs.GroupBy(g => new { g.dataSourceCode, g.manufacturerCode }).ToList();
 
                         foreach (var grouppedStockLv in grouppedStockLvList)
                         {
