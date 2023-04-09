@@ -75,6 +75,7 @@ namespace rtdc_rest.api.BackgroundServices
                 }
                 catch (Exception ex)
                 {
+                    LogFile("Hata Line 76", "Error Logs:" + ex.Message, "", "true", "");
                     await Task.FromCanceled(stoppingToken);
                 }
             }
