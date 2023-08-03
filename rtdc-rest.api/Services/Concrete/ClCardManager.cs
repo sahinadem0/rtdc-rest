@@ -22,7 +22,8 @@ namespace rtdc_rest.api.Services.Concrete
                 SqlConnection connect = new SqlConnection(connection);
                 connect.Open();
 
-                var sql = "select DataSourceCode =  case when INV.SOURCEINDEX = 35 then 'AYKIZM' " +
+                var sql = "SELECT DISTINCT CLC.CODE," +
+                          "DataSourceCode =  case when INV.SOURCEINDEX = 35 then 'AYKIZM' " +
                           "WHEN INV.SOURCEINDEX = 7 then 'AYKANT' " +
                           "WHEN INV.SOURCEINDEX = 42 then 'AYKKNY' " +
                           "WHEN INV.SOURCEINDEX = 50 then 'AYKIST' END " +
@@ -43,10 +44,7 @@ namespace rtdc_rest.api.Services.Concrete
                           "from LG_" + companyCode + "_CLCARD CLC  INNER  JOIN LG_" + companyCode + "_" + season + "_INVOICE INV WITH (NOLOCK) ON CLC.LOGICALREF = INV.CLIENTREF " +
                           "INNER  JOIN LG_" + companyCode + "_" + season + "_STLINE STL WITH (NOLOCK) ON INV.LOGICALREF = STL.INVOICEREF " +
                           "INNER  JOIN LG_" + companyCode + "_ITEMS ITM WITH (NOLOCK) ON STL.STOCKREF = ITM.LOGICALREF " +
-                          "WHERE CLC.ACTIVE = 0 and ITM.SPECODE IN ('BPT','3M','WL') AND INV.TRCODE = 8 " +
-                          "GROUP BY CLC.CODE,CLC.LOGICALREF,CLC.SPECODE3,CLC.SPECODE2,CLC.SPECODE5,CLC.DEFINITION_,CLC.EMAILADDR, " +
-                          "CLC.TELNRS1,CLC.TAXOFFICE,CLC.TAXNR,CLC.INCHARGE,CLC.COUNTRY,CLC.CITY,CLC.DISTRICT,CLC.ADDR1,CLC.ADDR2, " +
-                          "CLC.POSTCODE,INV.SOURCEINDEX";
+                          "WHERE CLC.ACTIVE = 0 and ITM.SPECODE IN ('BPT','3M','WL') AND INV.TRCODE = 8 ";
 
                 #region--old customers query
                 //var sql = " SELECT DataSourceCode = CASE WHEN SUBSTRING(CLC.CODE,5,1) IN('I', 'D', 'M') THEN 'AYKIZM' " +
