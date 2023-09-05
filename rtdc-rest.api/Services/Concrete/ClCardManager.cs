@@ -34,11 +34,11 @@ namespace rtdc_rest.api.Services.Concrete
                           ",Email = CLC.EMAILADDR " +
                           ",Phone = CLC.TELNRS1 " +
                           ",TaxOffice = CLC.TAXOFFICE " +
-                          ",TaxNumber = CLC.TAXNR " +
+                          ",TaxNumber = CASE WHEN ISPERSCOMP = 1 THEN CLC.TCKNO ELSE CLC.TAXNR END " +
                           ",ContactName = CLC.INCHARGE " +
                           ",Country = CLC.COUNTRY " +
                           ",City = CLC.CITY " +
-                          ",District = CLC.DISTRICT " +
+                          ",District = CASE WHEN CLC.TOWN = '' THEN 'MERKEZ' ELSE CLC.TOWN END " +
                           ",Address = CLC. ADDR1 + CLC.ADDR1 " +
                           ",ZipCode = CLC.POSTCODE " +
                           "from LG_" + companyCode + "_CLCARD CLC  INNER  JOIN LG_" + companyCode + "_" + season + "_INVOICE INV WITH (NOLOCK) ON CLC.LOGICALREF = INV.CLIENTREF " +
